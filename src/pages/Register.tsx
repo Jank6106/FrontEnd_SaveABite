@@ -18,7 +18,7 @@ export const Register = () => {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulate registration success
-    navigate('/');
+    navigate('/profile-setup');
   };
 
   return (

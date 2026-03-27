@@ -6,7 +6,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Leaf, ArrowRight, Github, Chrome } from 'lucide-react';
+import { Mail, Lock, Leaf, ArrowRight, Facebook, Chrome } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
@@ -86,7 +86,7 @@ export const Login = () => {
               <Chrome className="w-5 h-5" /> Google
             </Button>
             <Button variant="outline" className="h-12 gap-2">
-              <Github className="w-5 h-5" /> GitHub
+              <Facebook className="w-5 h-5" /> Facebook
             </Button>
           </div>
 

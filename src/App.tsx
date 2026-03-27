@@ -6,9 +6,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { ProfileSetup } from './pages/ProfileSetup';
 import { CustomerHome } from './pages/CustomerHome';
 import { FoodDetail } from './pages/FoodDetail';
 import { Checkout } from './pages/Checkout';
+import { MyOrders } from './pages/MyOrders';
 import { MerchantDashboard } from './pages/MerchantDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AnimatePresence } from 'motion/react';
@@ -21,11 +23,13 @@ export default function App() {
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile-setup" element={<ProfileSetup />} />
 
           {/* Customer Routes */}
           <Route path="/" element={<CustomerHome />} />
           <Route path="/food/:id" element={<FoodDetail />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<MyOrders />} />
 
           {/* Merchant Routes */}
           <Route path="/merchant" element={<MerchantDashboard />} />
