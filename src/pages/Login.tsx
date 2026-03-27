@@ -92,7 +92,7 @@ export const Login = () => {
 
           <p className="mt-8 text-center text-sm text-on-surface-variant">
             Chưa có tài khoản?{' '}
-            <Link to="#" className="text-primary font-bold hover:underline">Đăng ký ngay</Link>
+            <Link to="/register" className="text-primary font-bold hover:underline">Đăng ký ngay</Link>
           </p>
         </Card>
       </motion.div>

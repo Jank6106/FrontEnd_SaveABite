@@ -4,7 +4,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Search, MapPin, Filter, Leaf, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, MapPin, Filter, Leaf, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Header } from '../components/shared/Header';
 import { FoodCard } from '../components/shared/FoodCard';
 import { mockFoodItems } from '../mock/data';
@@ -13,13 +13,82 @@ import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { motion } from 'motion/react';
+import { useRef } from 'react';
+import { FoodItem } from '../types';
+
+interface ProductSectionProps {
+  title: string;
+  items: FoodItem[];
+  key?: string;
+}
+
+const ProductSection = ({ title, items }: ProductSectionProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollAmount = clientWidth;
+      const scrollTo = direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section>
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 uppercase">
+          <div className="w-2 h-8 bg-primary rounded-full" />
+          {title}
+        </h2>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Filter className="w-4 h-4" /> Lọc
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2">
+            <MapPin className="w-4 h-4" /> Bản đồ
+          </Button>
+        </div>
+      </div>
+      
+      <div className="relative group/scroll">
+        <button 
+          onClick={() => scroll('left')}
+          className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-surface-container-highest rounded-full hidden md:flex items-center justify-center border border-outline-variant/30 text-primary shadow-2xl opacity-0 group-hover/scroll:opacity-100 transition-all hover:scale-110 active:scale-95"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        
+        <div 
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto custom-scrollbar scroll-smooth pb-6 -mx-4 px-4 snap-x"
+        >
+          {items.map((item, index) => (
+            <div key={`${item.id}-${index}`} className="min-w-[280px] sm:min-w-[320px] flex-1 snap-start">
+              <FoodCard item={item} />
+            </div>
+          ))}
+        </div>
+
+        <button 
+          onClick={() => scroll('right')}
+          className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-surface-container-highest rounded-full hidden md:flex items-center justify-center border border-outline-variant/30 text-primary shadow-2xl opacity-0 group-hover/scroll:opacity-100 transition-all hover:scale-110 active:scale-95"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+    </section>
+  );
+};
 
 export const CustomerHome = () => {
+  const categories = ['Bánh mỳ', 'Bánh kem', 'Đồ mặn', 'Đồ uống'];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-8 space-y-12">
+      <main className="flex-1 container mx-auto px-4 py-8 space-y-16">
         {/* Hero Section */}
         <section className="relative rounded-[40px] overflow-hidden nature-gradient p-8 md:p-16 border border-outline-variant/30">
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
@@ -30,7 +99,7 @@ export const CustomerHome = () => {
             <Badge variant="primary" className="mb-6 py-1.5 px-4 text-xs">
               <Sparkles className="w-3 h-3 mr-2 inline" /> Giải cứu thực phẩm ngay hôm nay
             </Badge>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] mb-6 text-on-surface">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.4] mb-6 text-on-surface">
               TIẾT KIỆM <span className="text-primary">75%</span> <br />
               CHI PHÍ ĂN UỐNG
             </h1>
@@ -53,7 +122,7 @@ export const CustomerHome = () => {
           </div>
         </section>
 
-        {/* Categories */}
+        {/* Categories Quick Links */}
         <section>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
@@ -75,28 +144,20 @@ export const CustomerHome = () => {
         </section>
 
         {/* Featured Deals */}
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
-              <div className="w-2 h-8 bg-primary rounded-full" />
-              DEAL HỜI GẦN BẠN
-            </h2>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Filter className="w-4 h-4" /> Lọc
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <MapPin className="w-4 h-4" /> Bản đồ
-              </Button>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockFoodItems.map((item) => (
-              <FoodCard key={item.id} item={item} />
-            ))}
-          </div>
-        </section>
+        <ProductSection title="DEAL HỜI GẦN BẠN" items={[...mockFoodItems, ...mockFoodItems]} />
+
+        {/* Dynamic Category Sections */}
+        {categories.map((category) => {
+          const items = mockFoodItems.filter(item => item.category === category);
+          if (items.length === 0) return null;
+          return (
+            <ProductSection 
+              key={category} 
+              title={category} 
+              items={[...items, ...items]} // Duplicating for scroll effect
+            />
+          );
+        })}
 
         {/* Impact Banner */}
         <section className="bg-primary rounded-[40px] p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-primary/20">

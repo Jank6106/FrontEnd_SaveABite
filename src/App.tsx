@@ -5,6 +5,7 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login';
+import { Register } from './pages/Register';
 import { CustomerHome } from './pages/CustomerHome';
 import { FoodDetail } from './pages/FoodDetail';
 import { Checkout } from './pages/Checkout';
@@ -19,6 +20,7 @@ export default function App() {
         <Routes>
           {/* Auth */}
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* Customer Routes */}
           <Route path="/" element={<CustomerHome />} />
