@@ -1,11 +1,8 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 
 interface CardProps {
   children: React.ReactNode;

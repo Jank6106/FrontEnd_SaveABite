@@ -1,7 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import { 
   ShieldCheck, 
@@ -16,15 +13,15 @@ import {
   BarChart3,
   Leaf
 } from 'lucide-react';
-import { Sidebar } from '../components/shared/Sidebar';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
-import { Badge } from '../components/ui/Badge';
-import { Input } from '../components/ui/Input';
-import { mockMerchants } from '../mock/data';
+import { Sidebar } from '@/src/components/shared/Sidebar';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { Badge } from '@/src/components/ui/Badge';
+import { Input } from '@/src/components/ui/Input';
+import { mockMerchants } from '@/src/mock/data';
 import { motion } from 'motion/react';
 
-export const AdminDashboard = () => {
+export default function AdminDashboard() {
   const stats = [
     { label: 'Tổng người dùng', value: '24.5k', icon: Users, color: 'primary' },
     { label: 'Cửa hàng đối tác', value: '842', icon: Utensils, color: 'secondary' },

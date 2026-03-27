@@ -1,11 +1,8 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import * as React from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 
 interface ButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'error';
@@ -48,7 +45,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         ) : null}
-        {children}
+        {children as React.ReactNode}
       </motion.button>
     );
   }

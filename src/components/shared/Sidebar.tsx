@@ -1,9 +1,8 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { 
   LayoutDashboard, 
   Utensils, 
@@ -15,14 +14,14 @@ import {
   Users,
   ShieldCheck
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 
 interface SidebarProps {
   role: 'merchant' | 'admin';
 }
 
 export const Sidebar = ({ role }: SidebarProps) => {
-  const location = useLocation();
+  const pathname = usePathname();
 
   const merchantLinks = [
     { label: 'Tổng quan', icon: LayoutDashboard, path: '/merchant' },
@@ -42,7 +41,7 @@ export const Sidebar = ({ role }: SidebarProps) => {
 
   return (
     <aside className="w-72 h-screen sticky top-0 bg-surface-container-low border-r border-outline-variant/30 flex flex-col p-6">
-      <Link to="/" className="flex items-center gap-3 mb-12 px-2">
+      <Link href="/" className="flex items-center gap-3 mb-12 px-2">
         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
           <Leaf className="text-on-primary w-6 h-6" />
         </div>
@@ -54,11 +53,11 @@ export const Sidebar = ({ role }: SidebarProps) => {
           Menu chính
         </p>
         {links.map((link) => {
-          const isActive = location.pathname === link.path;
+          const isActive = pathname === link.path;
           return (
             <Link
               key={link.path}
-              to={link.path}
+              href={link.path}
               className={cn(
                 'flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group',
                 isActive 
@@ -75,7 +74,7 @@ export const Sidebar = ({ role }: SidebarProps) => {
 
       <div className="mt-auto pt-6 border-t border-outline-variant/30 space-y-2">
         <Link
-          to="/settings"
+          href="/settings"
           className="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-on-surface-variant hover:bg-surface-container-highest transition-colors"
         >
           <Settings className="w-5 h-5" />

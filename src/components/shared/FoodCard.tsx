@@ -4,12 +4,15 @@
  */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Star, Clock, MapPin, Leaf } from 'lucide-react';
-import { FoodItem } from '../../types';
+import Link from 'next/link';
+
+import { Star, Clock, MapPin, Leaf, ShoppingCart } from 'lucide-react';
+import { FoodItem } from '@/src/types';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
-import { formatCurrency } from '../../lib/utils';
+import { Button } from '../ui/Button';
+import { formatCurrency } from '@/src/lib/utils';
+import { useCart } from '@/src/lib/CartContext';
 
 interface FoodCardProps {
   item: FoodItem;
@@ -17,9 +20,17 @@ interface FoodCardProps {
 }
 
 export const FoodCard = ({ item }: FoodCardProps) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(item);
+  };
+
   return (
-    <Link to={`/food/${item.id}`}>
-      <Card className="group h-full flex flex-col nature-gradient">
+    <Card className="group h-full flex flex-col nature-gradient overflow-hidden relative">
+      <Link href={`/food/${item.id}`} className="flex-1 flex flex-col">
         <div className="relative aspect-[4/3] overflow-hidden">
           <img 
             src={item.image} 
@@ -70,7 +81,18 @@ export const FoodCard = ({ item }: FoodCardProps) => {
             </div>
           </div>
         </div>
-      </Card>
-    </Link>
+      </Link>
+      
+      {/* Add to Cart Button */}
+      <div className="px-5 pb-5 mt-auto">
+        <Button 
+          onClick={handleAddToCart}
+          className="w-full gap-2 rounded-xl h-11 font-bold shadow-lg shadow-primary/20 group-hover:scale-[1.02] active:scale-[0.98] transition-all"
+        >
+          <ShoppingCart className="w-4 h-4" />
+          THÊM VÀO GIỎ
+        </Button>
+      </div>
+    </Card>
   );
 };

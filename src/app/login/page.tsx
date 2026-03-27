@@ -1,26 +1,25 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import * as React from 'react';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { Mail, Lock, Leaf, ArrowRight, Facebook, Chrome } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
+import { Button } from '@/src/components/ui/Button';
+import { Input } from '@/src/components/ui/Input';
+import { Card } from '@/src/components/ui/Card';
 import { motion } from 'motion/react';
 
-export const Login = () => {
+export default function Login() {
   const [role, setRole] = useState<'customer' | 'merchant' | 'admin'>('customer');
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (role === 'merchant') navigate('/merchant');
-    else if (role === 'admin') navigate('/admin');
-    else navigate('/');
+    if (role === 'merchant') router.push('/merchant');
+    else if (role === 'admin') router.push('/admin');
+    else router.push('/');
   };
 
   return (
@@ -62,7 +61,7 @@ export const Login = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Mật khẩu</label>
-                <Link to="#" className="text-xs font-bold text-primary hover:underline">Quên mật khẩu?</Link>
+                <Link href="#" className="text-xs font-bold text-primary hover:underline">Quên mật khẩu?</Link>
               </div>
               <Input type="password" placeholder="••••••••" icon={<Lock className="w-5 h-5" />} required />
             </div>
@@ -92,7 +91,7 @@ export const Login = () => {
 
           <p className="mt-8 text-center text-sm text-on-surface-variant">
             Chưa có tài khoản?{' '}
-            <Link to="/register" className="text-primary font-bold hover:underline">Đăng ký ngay</Link>
+            <Link href="/register" className="text-primary font-bold hover:underline">Đăng ký ngay</Link>
           </p>
         </Card>
       </motion.div>

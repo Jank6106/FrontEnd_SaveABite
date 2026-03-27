@@ -1,20 +1,18 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { Search, MapPin, Filter, Leaf, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Header } from '../components/shared/Header';
-import { FoodCard } from '../components/shared/FoodCard';
-import { mockFoodItems } from '../mock/data';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
-import { Badge } from '../components/ui/Badge';
+import { Header } from '@/src/components/shared/Header';
+import { FoodCard } from '@/src/components/shared/FoodCard';
+import { mockFoodItems } from '@/src/mock/data';
+import { Button } from '@/src/components/ui/Button';
+import { Input } from '@/src/components/ui/Input';
+import { Card } from '@/src/components/ui/Card';
+import { Badge } from '@/src/components/ui/Badge';
 import { motion } from 'motion/react';
 import { useRef } from 'react';
-import { FoodItem } from '../types';
+import { FoodItem } from '@/src/types';
 
 interface ProductSectionProps {
   title: string;
@@ -81,7 +79,7 @@ const ProductSection = ({ title, items }: ProductSectionProps) => {
   );
 };
 
-export const CustomerHome = () => {
+export default function CustomerHome() {
   const categories = ['Bánh mỳ', 'Bánh kem', 'Đồ mặn', 'Đồ uống'];
 
   return (
@@ -192,10 +190,10 @@ export const CustomerHome = () => {
             Nền tảng kết nối người dùng với các nguồn thực phẩm dư thừa chất lượng cao, cùng nhau xây dựng lối sống bền vững.
           </p>
           <div className="flex justify-center gap-6 text-on-surface-variant font-bold text-sm uppercase tracking-widest">
-            <Link to="#" className="hover:text-primary transition-colors">Về chúng tôi</Link>
-            <Link to="#" className="hover:text-primary transition-colors">Đối tác</Link>
-            <Link to="#" className="hover:text-primary transition-colors">Liên hệ</Link>
-            <Link to="#" className="hover:text-primary transition-colors">Điều khoản</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Về chúng tôi</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Đối tác</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Liên hệ</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Điều khoản</Link>
           </div>
           <div className="mt-12 pt-8 border-t border-outline-variant/10 text-xs text-on-surface-variant/50">
             © 2024 SaveABite. All rights reserved. Made with 💚 for the planet.

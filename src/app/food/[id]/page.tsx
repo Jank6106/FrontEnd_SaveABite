@@ -1,24 +1,30 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useParams } from 'next/navigation';
+
 import { Star, Clock, MapPin, Leaf, ArrowLeft, ShieldCheck, Info, ShoppingBag, Plus, Minus } from 'lucide-react';
-import { Header } from '../components/shared/Header';
-import { mockFoodItems, mockReviews } from '../mock/data';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
-import { Badge } from '../components/ui/Badge';
-import { formatCurrency } from '../lib/utils';
+import { Header } from '@/src/components/shared/Header';
+import { mockFoodItems, mockReviews } from '@/src/mock/data';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { Badge } from '@/src/components/ui/Badge';
+import { formatCurrency } from '@/src/lib/utils';
 import { useState } from 'react';
 import { motion } from 'motion/react';
+import { useCart } from '@/src/lib/CartContext';
 
-export const FoodDetail = () => {
+export default function FoodDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const { buyNow } = useCart();
   const item = mockFoodItems.find((i) => i.id === id) || mockFoodItems[0];
   const [quantity, setQuantity] = useState(1);
+
+  const handleBuyNow = () => {
+    buyNow(item, quantity);
+    router.push('/payment');
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -27,7 +33,7 @@ export const FoodDetail = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <Button 
           variant="ghost" 
-          onClick={() => navigate(-1)} 
+          onClick={() => router.back()} 
           className="mb-8 gap-2 group text-on-surface-variant hover:text-primary"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -174,7 +180,7 @@ export const FoodDetail = () => {
 
                 <div className="space-y-4">
                   <Button 
-                    onClick={() => navigate('/checkout')}
+                    onClick={handleBuyNow}
                     className="w-full h-16 text-xl font-black tracking-tight gap-3 shadow-2xl shadow-primary/30"
                   >
                     ĐẶT HÀNG NGAY <ShoppingBag className="w-6 h-6" />

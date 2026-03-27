@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 
 interface BadgeProps {
   children: React.ReactNode;

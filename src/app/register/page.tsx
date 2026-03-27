@@ -1,24 +1,23 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import * as React from 'react';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { Mail, Lock, Leaf, ArrowRight, User, ShieldCheck } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
+import { Button } from '@/src/components/ui/Button';
+import { Input } from '@/src/components/ui/Input';
+import { Card } from '@/src/components/ui/Card';
 import { motion } from 'motion/react';
 
-export const Register = () => {
-  const navigate = useNavigate();
+export default function Register() {
+  const router = useRouter();
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulate registration success
-    navigate('/');
+    router.push('/profile-setup');
   };
 
   return (
@@ -66,7 +65,7 @@ export const Register = () => {
             <div className="flex items-start gap-3 py-2">
               <input type="checkbox" id="terms" className="mt-1 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary/30" required />
               <label htmlFor="terms" className="text-xs text-on-surface-variant font-medium leading-tight">
-                Tôi đồng ý với <Link to="#" className="text-primary font-bold hover:underline">Điều khoản dịch vụ</Link> và <Link to="#" className="text-primary font-bold hover:underline">Chính sách bảo mật</Link> của SaveABite.
+                Tôi đồng ý với <Link href="#" className="text-primary font-bold hover:underline">Điều khoản dịch vụ</Link> và <Link href="#" className="text-primary font-bold hover:underline">Chính sách bảo mật</Link> của SaveABite.
               </label>
             </div>
 
@@ -77,7 +76,7 @@ export const Register = () => {
 
           <p className="mt-8 text-center text-sm text-on-surface-variant font-medium">
             Đã có tài khoản?{' '}
-            <Link to="/login" className="text-primary font-black hover:underline">Đăng nhập</Link>
+            <Link href="/login" className="text-primary font-black hover:underline">Đăng nhập</Link>
           </p>
         </Card>
       </motion.div>

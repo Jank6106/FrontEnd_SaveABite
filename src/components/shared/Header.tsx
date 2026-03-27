@@ -1,19 +1,20 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+"use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+
 import { ShoppingBag, User, MapPin, Leaf, Navigation, LogOut, RefreshCw, ClipboardList } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AnimatePresence, motion } from 'motion/react';
+import { useCart } from '@/src/lib/CartContext';
 
 export const Header = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isHome = location.pathname === '/';
+  const pathname = usePathname();
+  const router = useRouter();
+  const { totalItems } = useCart();
+  const isHome = pathname === '/';
   const [userLocation, setUserLocation] = useState('Hà Nội, Việt Nam');
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -43,13 +44,13 @@ export const Header = () => {
 
   const handleMenuAction = (path: string) => {
     setIsProfileMenuOpen(false);
-    navigate(path);
+    router.push(path);
   };
 
   return (
     <header className="sticky top-0 z-50 w-full glass-panel border-b border-outline-variant/30">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
             <Leaf className="text-on-primary w-6 h-6" />
           </div>
@@ -73,13 +74,15 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex items-center gap-2">
-            <Link to="/checkout" className="relative">
+            <Link href="/checkout" className="relative">
               <Button variant="ghost" size="icon" className="rounded-full hover:bg-surface-container-highest">
                 <ShoppingBag className="w-5 h-5 text-on-surface" />
               </Button>
-              <Badge variant="primary" className="absolute -top-1 -right-1 px-1.5 min-w-[20px] h-[20px] flex items-center justify-center rounded-full border-2 border-background text-[10px] font-bold">
-                2
-              </Badge>
+              {totalItems > 0 && (
+                <Badge variant="primary" className="absolute -top-1 -right-1 px-1.5 min-w-[20px] h-[20px] flex items-center justify-center rounded-full border-2 border-background text-[10px] font-bold">
+                  {totalItems}
+                </Badge>
+              )}
             </Link>
           </div>
           
@@ -113,7 +116,7 @@ export const Header = () => {
                     </div>
                     <div className="p-2 flex flex-col gap-1">
                       <button 
-                        onClick={() => handleMenuAction('/profile-setup')}
+                        onClick={() => handleMenuAction('/profile')}
                         className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-xl transition-colors"
                       >
                         <User className="w-4 h-4" />
@@ -147,7 +150,7 @@ export const Header = () => {
               </AnimatePresence>
             </div>
           ) : (
-            <Link to="/login">
+            <Link href="/login">
               <Button variant="primary" size="sm" className="gap-2 rounded-full px-5">
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Đăng nhập</span>
