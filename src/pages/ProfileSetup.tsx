@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, User, Phone, Mail } from 'lucide-react';
+import { Camera, User, Phone, Mail, Lock } from 'lucide-react';
 import { motion } from 'motion/react';
 
-interface UserProfile {
+interface ProfileForm {
   email: string;
   nickname: string;
   phone: string;
   avatarUrl: string;
 }
 
-const mockUser: UserProfile = {
+const mockProfile: ProfileForm = {
   email: 'user@saveabite.com',
   nickname: 'Khách hàng',
   phone: '0901234567',
@@ -20,7 +20,7 @@ const mockUser: UserProfile = {
 
 export const ProfileSetup = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<UserProfile>(mockUser);
+  const [formData, setFormData] = useState<ProfileForm>(mockProfile);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,49 +34,55 @@ export const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050806] flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-[#0d1117] flex items-center justify-center p-4 font-sans">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xl bg-gradient-to-b from-[#1a241e] to-[#121a15] rounded-2xl border border-primary/50 p-6 md:p-8 shadow-[0_0_120px_-30px_rgba(46,202,106,0.4),inset_0_0_20px_rgba(46,202,106,0.05)]"
+        className="w-full max-w-xl bg-[#161b22] rounded-2xl p-6 md:p-10 shadow-2xl"
       >
-        <h1 className="text-2xl font-bold mb-8 text-on-surface text-center md:text-left drop-shadow-[0_0_10px_rgba(46,202,106,0.3)]">Hồ sơ cá nhân</h1>
+        <h1 className="text-2xl font-bold mb-8 text-gray-100 text-center">Chỉnh sửa hồ sơ cá nhân</h1>
         
         {/* Avatar Section */}
-        <div className="flex flex-col items-center md:items-start mb-8">
+        <div className="flex flex-col items-center mb-10">
           <div className="relative group cursor-pointer inline-block">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-colors bg-surface-container-highest shadow-[0_0_20px_rgba(46,202,106,0.2)]">
+            <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-emerald-500 bg-gray-800">
               <img src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
             </div>
+            
             {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera className="w-6 h-6 text-white" />
+            <div className="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <Camera className="w-6 h-6 text-white mb-1" />
+              <span className="text-[10px] font-medium text-white uppercase tracking-wider">Thay đổi ảnh</span>
             </div>
+            
             {/* Camera Badge at bottom right */}
-            <div className="absolute bottom-0 right-0 bg-surface-container-highest rounded-full p-1.5 border border-primary/30 group-hover:border-primary transition-colors shadow-[0_0_10px_rgba(46,202,106,0.3)]">
-              <Camera className="w-4 h-4 text-on-surface-variant group-hover:text-primary" />
+            <div className="absolute bottom-0 right-0 bg-gray-900 rounded-full p-2 border border-gray-700 group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-colors duration-200">
+              <Camera className="w-4 h-4 text-gray-300 group-hover:text-white" />
             </div>
           </div>
         </div>
 
         {/* Form Fields */}
-        <form className="space-y-5 p-44 rounded-2xl shadow-[inset_0_0_460px_rgba(46,202,106,0.45)]" onSubmit={handleSubmit}>
-          {/* Email */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Email (Read-only) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-on-surface-variant flex items-center gap-2 drop-shadow-[0_0_5px_rgba(46,202,106,0.2)]">
+            <label className="text-sm font-medium text-gray-400 flex items-center gap-2">
               <Mail className="w-4 h-4" /> Email
             </label>
-            <input 
-              type="email" 
-              value={formData.email}
-              disabled
-              className="w-full bg-surface-container/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface-variant/70 cursor-not-allowed focus:outline-none shadow-[inset_0_0_10px_rgba(46,202,106,0.02)]"
-            />
+            <div className="relative">
+              <input 
+                type="email" 
+                value={formData.email}
+                disabled
+                className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-4 pr-10 py-3 text-gray-500 cursor-not-allowed focus:outline-none shadow-inner"
+              />
+              <Lock className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2" />
+            </div>
           </div>
 
           {/* Nickname */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-on-surface-variant flex items-center gap-2 drop-shadow-[0_0_5px_rgba(46,202,106,0.2)]">
+            <label className="text-sm font-medium text-gray-400 flex items-center gap-2">
               <User className="w-4 h-4" /> Biệt danh
             </label>
             <input 
@@ -84,13 +90,13 @@ export const ProfileSetup = () => {
               name="nickname"
               value={formData.nickname}
               onChange={handleChange}
-              className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-[0_0_15px_rgba(46,202,106,0.2)] transition-all"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
             />
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-on-surface-variant flex items-center gap-2 drop-shadow-[0_0_5px_rgba(46,202,106,0.2)]">
+            <label className="text-sm font-medium text-gray-400 flex items-center gap-2">
               <Phone className="w-4 h-4" /> Số điện thoại
             </label>
             <input 
@@ -98,22 +104,22 @@ export const ProfileSetup = () => {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-[0_0_15px_rgba(46,202,106,0.2)] transition-all"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-6 mt-4 border-t border-outline-variant/30">
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-8 mt-4">
             <button 
               type="button"
               onClick={() => navigate(-1)}
-              className="px-6 py-2.5 rounded-xl font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest hover:shadow-[0_0_15px_rgba(46,202,106,0.1)] transition-all"
+              className="w-full sm:w-auto px-8 py-3 rounded-lg font-medium text-gray-400 border border-gray-600 hover:bg-gray-800 hover:text-white transition-colors duration-200"
             >
               Hủy
             </button>
             <button 
               type="submit"
-              className="px-6 py-2.5 rounded-xl font-medium bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-[0_0_20px_rgba(46,202,106,0.4)]"
+              className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors duration-200 shadow-lg shadow-emerald-500/20"
             >
               Lưu thay đổi
             </button>
