@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 import { 
   LayoutDashboard, 
@@ -12,7 +14,9 @@ import {
   LogOut,
   Leaf,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -23,6 +27,12 @@ interface SidebarProps {
 export const Sidebar = ({ role }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const merchantLinks = [
     { label: 'Tổng quan', icon: LayoutDashboard, path: '/merchant' },
@@ -79,6 +89,15 @@ export const Sidebar = ({ role }: SidebarProps) => {
       </nav>
 
       <div className="mt-auto pt-6 border-t border-outline-variant/30 space-y-2">
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-on-surface-variant hover:bg-surface-container-highest transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <span className="font-semibold">{theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}</span>
+          </button>
+        )}
         <Link
           href={role === 'merchant' ? '/merchant/settings' : '/admin/settings'}
           className="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-on-surface-variant hover:bg-surface-container-highest transition-colors"

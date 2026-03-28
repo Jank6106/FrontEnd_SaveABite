@@ -12,7 +12,7 @@ import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { formatCurrency } from '@/src/lib/utils';
-import { useCart } from '@/src/lib/CartContext';
+import { useCart } from '@/src/providers/CartProvider';
 
 interface FoodCardProps {
   item: FoodItem;

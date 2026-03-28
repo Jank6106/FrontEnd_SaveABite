@@ -6,7 +6,7 @@ import { Card } from '@/src/components/ui/Card';
 import { Button } from '@/src/components/ui/Button';
 import { Badge } from '@/src/components/ui/Badge';
 import { ShieldCheck, Check, X, AlertTriangle, Store, FileText, Star } from 'lucide-react';
-import { StoreApprovalDetail } from '@/src/components/admin/StoreApprovalDetail';
+import { StoreApprovalDetail } from '@/src/features/admin/components/StoreApprovalDetail';
 import { AnimatePresence } from 'motion/react';
 import { mockMerchants } from '@/src/mock/data';
 import { Modal } from '@/src/components/ui/Modal';

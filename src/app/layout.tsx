@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { CartProvider } from "@/src/lib/CartContext";
+import { CartProvider } from "@/src/providers/CartProvider";
 
 export const metadata: Metadata = {
   title: "SaveABite",

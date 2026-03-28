@@ -8,7 +8,7 @@ import { ShoppingBag, User, MapPin, Leaf, Navigation, LogOut, RefreshCw, Clipboa
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCart } from '@/src/lib/CartContext';
+import { useCart } from '@/src/providers/CartProvider';
 
 export const Header = () => {
   const pathname = usePathname();
