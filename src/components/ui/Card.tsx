@@ -10,9 +10,10 @@ interface CardProps {
   variant?: 'default' | 'glass' | 'outline' | 'highest';
   hover?: boolean;
   key?: React.Key;
+  onClick?: () => void;
 }
 
-export const Card = ({ children, className, variant = 'default', hover = true }: CardProps) => {
+export const Card = ({ children, className, variant = 'default', hover = true, onClick }: CardProps) => {
   const variants = {
     default: 'bg-surface-container-low',
     glass: 'glass-panel',
@@ -22,6 +23,7 @@ export const Card = ({ children, className, variant = 'default', hover = true }:
 
   return (
     <motion.div
+      onClick={onClick}
       whileHover={hover ? { y: -4, transition: { duration: 0.2 } } : undefined}
       className={cn(
         'rounded-3xl overflow-hidden transition-shadow',

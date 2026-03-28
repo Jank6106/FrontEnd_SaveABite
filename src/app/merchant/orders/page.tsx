@@ -9,7 +9,8 @@ import {
   Clock,
   Package,
   Truck,
-  CheckCircle
+  CheckCircle,
+  Eye
 } from 'lucide-react';
 import { Sidebar } from '@/src/components/shared/Sidebar';
 import { Button } from '@/src/components/ui/Button';
@@ -17,18 +18,85 @@ import { Card } from '@/src/components/ui/Card';
 import { Badge } from '@/src/components/ui/Badge';
 import { Input } from '@/src/components/ui/Input';
 import { mockOrders } from '@/src/mock/data';
-import { formatCurrency } from '@/src/lib/utils';
-import { useState } from 'react';
+import { formatCurrency, cn } from '@/src/lib/utils';
+import { useState, useMemo } from 'react';
+import { Order } from '@/src/types';
 
 export default function MerchantOrders() {
   const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Local state for orders to allow status updates
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
+
+  // Filter orders based on active tab and search term
+  const filteredOrders = useMemo(() => {
+    return orders.filter(order => {
+      const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            order.merchantName.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      if (activeTab === 'all') return matchesSearch;
+      return order.status === activeTab && matchesSearch;
+    });
+  }, [orders, activeTab, searchTerm]);
+
+  // Calculate counts for tabs
+  const counts = useMemo(() => {
+    return {
+      all: orders.length,
+      pending: orders.filter(o => o.status === 'pending').length,
+      confirmed: orders.filter(o => o.status === 'confirmed').length,
+      completed: orders.filter(o => o.status === 'completed').length,
+      cancelled: orders.filter(o => o.status === 'cancelled').length,
+    };
+  }, [orders]);
 
   const tabs = [
-    { id: 'all', label: 'Tất cả', count: mockOrders.length },
-    { id: 'pending', label: 'Chờ xử lý', count: 12 },
-    { id: 'processing', label: 'Đang chuẩn bị', count: 8 },
-    { id: 'completed', label: 'Hoàn thành', count: 156 },
+    { id: 'all', label: 'Tất cả', count: counts.all },
+    { id: 'pending', label: 'Chờ xử lý', count: counts.pending },
+    { id: 'confirmed', label: 'Đã chuẩn bị', count: counts.confirmed },
+    { id: 'completed', label: 'Khách đã nhận', count: counts.completed },
+    { id: 'cancelled', label: 'Đã hủy', count: counts.cancelled },
   ];
+
+  const handleUpdateStatus = (orderId: string, newStatus: Order['status']) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+  };
+
+  const getStatusBadge = (status: Order['status']) => {
+    switch (status) {
+      case 'pending':
+        return (
+          <Badge variant="tertiary" className="bg-tertiary/10 text-tertiary flex items-center gap-1 w-fit">
+            <Clock className="w-3 h-3" /> Chờ xử lý
+          </Badge>
+        );
+      case 'confirmed':
+        return (
+          <Badge variant="secondary" className="bg-secondary/10 text-secondary flex items-center gap-1 w-fit">
+            <Package className="w-3 h-3" /> Đang chuẩn bị
+          </Badge>
+        );
+      case 'completed':
+        return (
+          <Badge variant="primary" className="bg-primary/10 text-primary flex items-center gap-1 w-fit">
+            <CheckCircle className="w-3 h-3" /> Khách đã nhận
+          </Badge>
+        );
+      case 'cancelled':
+        return (
+          <Badge variant="outline" className="text-error border-error/30 bg-error/5 flex items-center gap-1 w-fit">
+            <XCircle className="w-3 h-3" /> Đã hủy
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -74,8 +142,10 @@ export default function MerchantOrders() {
           <div className="relative w-full md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
             <Input 
-              placeholder="Tìm mã đơn hàng..." 
+              placeholder="Tìm mã đơn hàng, tên khách..." 
               className="pl-12 h-12 bg-surface-container-highest/50 border-outline-variant/30"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
@@ -96,82 +166,124 @@ export default function MerchantOrders() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
-                {mockOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-surface-container-highest/30 transition-colors">
-                    <td className="px-6 py-4 font-black text-primary">{order.id}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                          {order.merchantName[0]}
-                        </div>
-                        <span className="font-bold text-sm text-on-surface">{order.merchantName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        {order.items.map((item, i) => (
-                          <div key={i} className="text-sm text-on-surface-variant font-medium">
-                            {item.name} x{item.quantity}
+                {filteredOrders.length > 0 ? (
+                  filteredOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-surface-container-highest/30 transition-colors">
+                      <td className="px-6 py-4 font-black text-primary">{order.id}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+                            {order.merchantName[0]}
                           </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-on-surface-variant font-medium">
-                      Hôm nay, 14:30
-                    </td>
-                    <td className="px-6 py-4 font-black text-on-surface">{formatCurrency(order.totalAmount)}</td>
-                    <td className="px-6 py-4">
-                      <Badge variant="tertiary" className="bg-tertiary/10 text-tertiary flex items-center gap-1 w-fit">
-                        <Clock className="w-3 h-3" /> Chờ chuẩn bị
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10">
-                          <CheckCircle2 className="w-5 h-5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-error hover:bg-error/10">
-                          <XCircle className="w-5 h-5" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="w-5 h-5" />
-                        </Button>
-                      </div>
+                          <span className="font-bold text-sm text-on-surface">{order.merchantName}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="space-y-1">
+                          {order.items.map((item, i) => (
+                            <div key={i} className="text-sm text-on-surface-variant font-medium">
+                              {item.name} x{item.quantity}
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-on-surface-variant font-medium">
+                        {new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="px-6 py-4 font-black text-on-surface">{formatCurrency(order.totalAmount)}</td>
+                      <td className="px-6 py-4">
+                        {getStatusBadge(order.status)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          {order.status === 'pending' && (
+                            <>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-primary hover:bg-primary/10"
+                                onClick={() => handleUpdateStatus(order.id, 'confirmed')}
+                                title="Nhận đơn"
+                              >
+                                <CheckCircle2 className="w-5 h-5" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-error hover:bg-error/10"
+                                onClick={() => handleUpdateStatus(order.id, 'cancelled')}
+                                title="Hủy đơn"
+                              >
+                                <XCircle className="w-5 h-5" />
+                              </Button>
+                            </>
+                          )}
+                          {order.status === 'confirmed' && (
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-primary hover:bg-primary/10"
+                              onClick={() => handleUpdateStatus(order.id, 'completed')}
+                              title="Khách đã nhận"
+                            >
+                              <CheckCircle className="w-5 h-5" />
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="icon" title="Xem chi tiết">
+                            <Eye className="w-5 h-5" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-on-surface-variant">
+                      Không tìm thấy đơn hàng nào.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
         </Card>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <Card variant="highest" className="p-6 border border-outline-variant/30 flex items-center gap-6">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-              <Package className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+              <Clock className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-on-surface">12</h3>
-              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đang chuẩn bị</p>
+              <h3 className="text-2xl font-black text-on-surface">{counts.pending}</h3>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Chờ xử lý</p>
             </div>
           </Card>
           <Card variant="highest" className="p-6 border border-outline-variant/30 flex items-center gap-6">
             <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
-              <Truck className="w-8 h-8" />
+              <Package className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-on-surface">5</h3>
-              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đang giao hàng</p>
+              <h3 className="text-2xl font-black text-on-surface">{counts.confirmed}</h3>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đang chuẩn bị</p>
             </div>
           </Card>
           <Card variant="highest" className="p-6 border border-outline-variant/30 flex items-center gap-6">
-            <div className="w-14 h-14 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
               <CheckCircle className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-on-surface">156</h3>
-              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đã hoàn thành</p>
+              <h3 className="text-2xl font-black text-on-surface">{counts.completed}</h3>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Khách đã nhận</p>
+            </div>
+          </Card>
+          <Card variant="highest" className="p-6 border border-outline-variant/30 flex items-center gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-error/10 flex items-center justify-center text-error">
+              <XCircle className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-black text-on-surface">{counts.cancelled}</h3>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đã hủy</p>
             </div>
           </Card>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from 'react';
 import { 
   TrendingUp, 
   TrendingDown,
@@ -31,26 +32,91 @@ import {
   Cell
 } from 'recharts';
 
-const revenueData = [
-  { name: 'T2', value: 1200000 },
-  { name: 'T3', value: 1800000 },
-  { name: 'T4', value: 1400000 },
-  { name: 'T5', value: 2200000 },
-  { name: 'T6', value: 2800000 },
-  { name: 'T7', value: 3500000 },
-  { name: 'CN', value: 3100000 },
-];
+type TimeFilter = 'day' | 'week' | 'month' | 'year';
 
-const categoryData = [
-  { name: 'Bánh mì', value: 400 },
-  { name: 'Cơm trưa', value: 300 },
-  { name: 'Đồ uống', value: 200 },
-  { name: 'Tráng miệng', value: 100 },
-];
+const revenueDataMap = {
+  day: [
+    { name: '08:00', value: 150000 },
+    { name: '10:00', value: 300000 },
+    { name: '12:00', value: 800000 },
+    { name: '14:00', value: 450000 },
+    { name: '16:00', value: 200000 },
+    { name: '18:00', value: 900000 },
+    { name: '20:00', value: 600000 },
+  ],
+  week: [
+    { name: 'T2', value: 1200000 },
+    { name: 'T3', value: 1800000 },
+    { name: 'T4', value: 1400000 },
+    { name: 'T5', value: 2200000 },
+    { name: 'T6', value: 2800000 },
+    { name: 'T7', value: 3500000 },
+    { name: 'CN', value: 3100000 },
+  ],
+  month: [
+    { name: 'Tuần 1', value: 8500000 },
+    { name: 'Tuần 2', value: 9200000 },
+    { name: 'Tuần 3', value: 10500000 },
+    { name: 'Tuần 4', value: 11800000 },
+  ],
+  year: [
+    { name: 'T1', value: 35000000 },
+    { name: 'T2', value: 38000000 },
+    { name: 'T3', value: 42000000 },
+    { name: 'T4', value: 40000000 },
+    { name: 'T5', value: 45000000 },
+    { name: 'T6', value: 48000000 },
+    { name: 'T7', value: 52000000 },
+    { name: 'T8', value: 55000000 },
+    { name: 'T9', value: 50000000 },
+    { name: 'T10', value: 58000000 },
+    { name: 'T11', value: 62000000 },
+    { name: 'T12', value: 70000000 },
+  ]
+};
+
+const categoryDataMap = {
+  day: [
+    { name: 'Bánh mì', value: 45 },
+    { name: 'Cơm trưa', value: 80 },
+    { name: 'Đồ uống', value: 60 },
+    { name: 'Tráng miệng', value: 20 },
+  ],
+  week: [
+    { name: 'Bánh mì', value: 400 },
+    { name: 'Cơm trưa', value: 300 },
+    { name: 'Đồ uống', value: 200 },
+    { name: 'Tráng miệng', value: 100 },
+  ],
+  month: [
+    { name: 'Bánh mì', value: 1800 },
+    { name: 'Cơm trưa', value: 1200 },
+    { name: 'Đồ uống', value: 900 },
+    { name: 'Tráng miệng', value: 450 },
+  ],
+  year: [
+    { name: 'Bánh mì', value: 22000 },
+    { name: 'Cơm trưa', value: 15000 },
+    { name: 'Đồ uống', value: 11000 },
+    { name: 'Tráng miệng', value: 5500 },
+  ]
+};
+
+const statsDataMap = {
+  day: { revenue: '3.4M', orders: '15', customers: '42', co2: '5.2kg', label: 'Hôm nay' },
+  week: { revenue: '12.5M', orders: '48', customers: '1.2k', co2: '156kg', label: '7 ngày qua' },
+  month: { revenue: '40.0M', orders: '185', customers: '4.5k', co2: '620kg', label: 'Tháng này' },
+  year: { revenue: '595M', orders: '2.4k', customers: '52k', co2: '7.5t', label: 'Năm nay' },
+};
 
 const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'];
 
 export default function MerchantAnalytics() {
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
+
+  const revenueData = revenueDataMap[timeFilter];
+  const categoryData = categoryDataMap[timeFilter];
+  const stats = statsDataMap[timeFilter];
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar role="merchant" />
@@ -63,11 +129,42 @@ export default function MerchantAnalytics() {
             <p className="text-on-surface-variant font-medium">Theo dõi hiệu quả kinh doanh và tác động môi trường của bạn.</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="gap-2 h-12 px-6">
-              <Calendar className="w-5 h-5" /> 7 ngày qua
-            </Button>
-            <Button className="gap-2 h-12 px-6 shadow-xl shadow-primary/20">
-              <Download className="w-5 h-5" /> TẢI BÁO CÁO
+            <div className="flex bg-surface-container-highest/50 rounded-lg p-1 border border-outline-variant/30">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={timeFilter === 'day' ? 'font-bold shadow-md bg-surface text-primary' : 'font-medium text-on-surface-variant'}
+                onClick={() => setTimeFilter('day')}
+              >
+                Ngày
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={timeFilter === 'week' ? 'font-bold shadow-md bg-surface text-primary' : 'font-medium text-on-surface-variant'}
+                onClick={() => setTimeFilter('week')}
+              >
+                Tuần
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={timeFilter === 'month' ? 'font-bold shadow-md bg-surface text-primary' : 'font-medium text-on-surface-variant'}
+                onClick={() => setTimeFilter('month')}
+              >
+                Tháng
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={timeFilter === 'year' ? 'font-bold shadow-md bg-surface text-primary' : 'font-medium text-on-surface-variant'}
+                onClick={() => setTimeFilter('year')}
+              >
+                Năm
+              </Button>
+            </div>
+            <Button className="gap-2 h-10 px-6 shadow-xl shadow-primary/20">
+              <Download className="w-4 h-4" /> TẢI BÁO CÁO
             </Button>
           </div>
         </header>
@@ -83,8 +180,8 @@ export default function MerchantAnalytics() {
                 <ArrowUpRight className="w-3 h-3" /> +12%
               </Badge>
             </div>
-            <h3 className="text-3xl font-black text-on-surface mb-1">12.5M</h3>
-            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Tổng doanh thu</p>
+            <h3 className="text-3xl font-black text-on-surface mb-1">{stats.revenue}</h3>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Tổng doanh thu ({stats.label})</p>
           </Card>
 
           <Card variant="highest" className="p-6 border border-outline-variant/30">
@@ -96,8 +193,8 @@ export default function MerchantAnalytics() {
                 <ArrowUpRight className="w-3 h-3" /> +5%
               </Badge>
             </div>
-            <h3 className="text-3xl font-black text-on-surface mb-1">48</h3>
-            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đơn hàng mới</p>
+            <h3 className="text-3xl font-black text-on-surface mb-1">{stats.orders}</h3>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Đơn hàng mới ({stats.label})</p>
           </Card>
 
           <Card variant="highest" className="p-6 border border-outline-variant/30">
@@ -109,8 +206,8 @@ export default function MerchantAnalytics() {
                 <ArrowUpRight className="w-3 h-3" /> +18%
               </Badge>
             </div>
-            <h3 className="text-3xl font-black text-on-surface mb-1">1.2k</h3>
-            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Khách hàng mới</p>
+            <h3 className="text-3xl font-black text-on-surface mb-1">{stats.customers}</h3>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Khách hàng mới ({stats.label})</p>
           </Card>
 
           <Card variant="highest" className="p-6 border border-outline-variant/30">
@@ -122,8 +219,8 @@ export default function MerchantAnalytics() {
                 <ArrowUpRight className="w-3 h-3" /> +24%
               </Badge>
             </div>
-            <h3 className="text-3xl font-black text-on-surface mb-1">156kg</h3>
-            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">CO2 Tiết kiệm</p>
+            <h3 className="text-3xl font-black text-on-surface mb-1">{stats.co2}</h3>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">CO2 Tiết kiệm ({stats.label})</p>
           </Card>
         </div>
 
@@ -134,13 +231,8 @@ export default function MerchantAnalytics() {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
                 <div className="w-2 h-8 bg-primary rounded-full" />
-                DOANH THU THEO NGÀY
+                DOANH THU THEO {timeFilter === 'day' ? 'GIỜ' : timeFilter === 'week' ? 'NGÀY' : timeFilter === 'month' ? 'TUẦN' : 'THÁNG'}
               </h2>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="sm" className="font-bold">Ngày</Button>
-                <Button variant="ghost" size="sm" className="font-bold text-primary">Tuần</Button>
-                <Button variant="ghost" size="sm" className="font-bold">Tháng</Button>
-              </div>
             </div>
             <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">

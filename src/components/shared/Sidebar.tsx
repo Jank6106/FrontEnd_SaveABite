@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { 
   LayoutDashboard, 
@@ -22,6 +22,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ role }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const merchantLinks = [
     { label: 'Tổng quan', icon: LayoutDashboard, path: '/merchant' },
@@ -39,14 +40,19 @@ export const Sidebar = ({ role }: SidebarProps) => {
 
   const links = role === 'merchant' ? merchantLinks : adminLinks;
 
+  const handleLogout = () => {
+    // Perform any logout logic here (e.g., clearing tokens)
+    router.push('/login');
+  };
+
   return (
     <aside className="w-72 h-screen sticky top-0 bg-surface-container-low border-r border-outline-variant/30 flex flex-col p-6">
-      <Link href="/" className="flex items-center gap-3 mb-12 px-2">
+      <div className="flex items-center gap-3 mb-12 px-2">
         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
           <Leaf className="text-on-primary w-6 h-6" />
         </div>
         <span className="text-xl font-black tracking-tighter text-primary">SAVEABITE</span>
-      </Link>
+      </div>
 
       <nav className="flex-1 space-y-2">
         <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest px-4 mb-4">
@@ -74,13 +80,14 @@ export const Sidebar = ({ role }: SidebarProps) => {
 
       <div className="mt-auto pt-6 border-t border-outline-variant/30 space-y-2">
         <Link
-          href="/settings"
+          href={role === 'merchant' ? '/merchant/settings' : '/admin/settings'}
           className="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-on-surface-variant hover:bg-surface-container-highest transition-colors"
         >
           <Settings className="w-5 h-5" />
           <span className="font-semibold">Cài đặt</span>
         </Link>
         <button
+          onClick={handleLogout}
           className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-error hover:bg-error/10 transition-colors"
         >
           <LogOut className="w-5 h-5" />
